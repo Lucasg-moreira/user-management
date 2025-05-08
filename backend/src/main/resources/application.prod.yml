@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: usermanagement
+
+  datasource:
+    url: jdbc:h2:mem:incidentdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+keycloak:
+  realm: user
+  auth-server-url: http://keycloak:8080
+  client-id: user_manager
+  grant-type: password
+  client-secret: CmtQ0OK32Ihm3gp3EYcUPRqF6ePCUgGH
+
+server:
+  port: 8081

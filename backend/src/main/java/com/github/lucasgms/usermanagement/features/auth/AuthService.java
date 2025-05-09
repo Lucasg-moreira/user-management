@@ -1,10 +1,10 @@
 package com.github.lucasgms.usermanagement.features.auth;
 
+import com.github.lucasgms.usermanagement.exception.BusinessException;
+import com.github.lucasgms.usermanagement.features.auth.dtos.TokenDto;
+import com.github.lucasgms.usermanagement.features.auth.dtos.UserLoginDTO;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,7 +21,7 @@ public class AuthService {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String keycloakUrl;
 
-    public ResponseEntity<String> login(UserLoginDTO user) {
+    public TokenDto login(UserLoginDTO user) {
         HttpHeaders headers = new HttpHeaders();
         RestTemplate rt = new RestTemplate();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -33,8 +33,14 @@ public class AuthService {
         formData.add("grant_type", grantType);
         formData.add("client_id", clientId);
 
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity(formData, headers);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formData, headers);
 
-        return rt.postForEntity(keycloakUrl + "/protocol/openid-connect/token", entity, String.class);
+        ResponseEntity<TokenDto> result = rt.postForEntity(keycloakUrl + "/protocol/openid-connect/token", entity, TokenDto.class);
+
+        if (result.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+            throw new BusinessException("Verifique o usuário e senha");
+        }
+
+        return result.getBody();
     }
 }

@@ -1,4 +1,4 @@
-package com.github.lucasgms.usermanagement.features.user.entities;
+package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
 import jakarta.persistence.Entity;
 

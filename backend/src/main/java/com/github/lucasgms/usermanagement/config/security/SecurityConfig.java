@@ -19,7 +19,6 @@ public class SecurityConfig {
         this.jwtCookieFilter = jwtCookieFilter;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 

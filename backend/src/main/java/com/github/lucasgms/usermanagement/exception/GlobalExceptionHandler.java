@@ -2,6 +2,7 @@ package com.github.lucasgms.usermanagement.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Map<String, String>> handleBusinessValidation(BusinessException ex) {
         Map<String, String> error = buildErrorResponse(ex.getMessage());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        String msg = null;
+
+        if (ex.getCause().getCause() instanceof BusinessException)
+            msg = ex.getCause().getCause().getMessage();
+        else
+            msg = ex.getMessage();
+
+        Map<String, String> error = buildErrorResponse(msg);
+
 
         return ResponseEntity.badRequest().body(error);
     }

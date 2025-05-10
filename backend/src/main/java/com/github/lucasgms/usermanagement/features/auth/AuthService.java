@@ -5,7 +5,6 @@ import com.github.lucasgms.usermanagement.features.auth.dtos.TokenDto;
 import com.github.lucasgms.usermanagement.features.auth.dtos.UserLoginDto;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IUserService;
-import com.github.lucasgms.usermanagement.shared.BaseService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +16,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class AuthService extends BaseService {
+public class AuthService {
     @Value("${keycloak.grant-type}")
     private String grantType;
 

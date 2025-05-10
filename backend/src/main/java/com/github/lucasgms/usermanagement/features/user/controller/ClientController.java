@@ -1,9 +1,8 @@
 package com.github.lucasgms.usermanagement.features.user.controller;
 
+import com.github.lucasgms.usermanagement.features.user.domain.dtos.CompanyClientDto;
 import com.github.lucasgms.usermanagement.features.user.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.Client;
-import com.github.lucasgms.usermanagement.features.user.domain.entities.CompanyClient;
-import com.github.lucasgms.usermanagement.features.user.domain.entities.IndividualClient;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IClientService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,9 +47,15 @@ public class ClientController {
     @PostMapping("/company")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Client> createCompanyClient(
-            @RequestBody CompanyClient client
+            HttpServletRequest request,
+            @RequestBody CompanyClientDto client
     ) {
-        return ResponseEntity.ok(this.service.create(client));
+        if (request.getAttribute("user") == null)
+            return ResponseEntity.badRequest().build();
+
+        User userLogged = (User) request.getAttribute("user");
+
+        return ResponseEntity.ok(this.service.createCompanyClient(client, userLogged));
     }
 }
 

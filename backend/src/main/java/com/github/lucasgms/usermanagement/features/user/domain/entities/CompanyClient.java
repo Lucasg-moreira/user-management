@@ -1,17 +1,20 @@
 package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
+import com.github.lucasgms.usermanagement.features.user.domain.valueObject.Cnpj;
 import jakarta.persistence.Entity;
 
 @Entity
 public class CompanyClient extends Client {
     private String companyName;
     private String fantasyName;
-    private String cnpj;
+    private Cnpj cnpj;
 
-    public CompanyClient(String companyName, String cnpj, String fantasyName) {
+    public CompanyClient(String companyName, Cnpj cnpj, String fantasyName, String telephone) {
         this.companyName = companyName;
         this.cnpj = cnpj;
         this.fantasyName = fantasyName;
+
+        this.setTelephone(telephone);
     }
 
     public String getCompanyName() {
@@ -22,11 +25,11 @@ public class CompanyClient extends Client {
         this.companyName = companyName;
     }
 
-    public String getCnpj() {
+    public Cnpj getCnpj() {
         return cnpj;
     }
 
-    public void setCnpj(String cnpj) {
+    public void setCnpj(Cnpj cnpj) {
         this.cnpj = cnpj;
     }
 

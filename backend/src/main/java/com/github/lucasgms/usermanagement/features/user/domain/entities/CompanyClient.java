@@ -11,8 +11,10 @@ public class CompanyClient extends Client {
     private String fantasyName;
 
     @Embedded
-    @Column(name = "cnpj")
+    @Column(name = "cnpj", unique = true)
     private Cnpj cnpj;
+
+    public CompanyClient() {}
 
     public CompanyClient(String companyName, Cnpj cnpj, String fantasyName, String telephone) {
         this.companyName = companyName;

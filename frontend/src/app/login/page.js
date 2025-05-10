@@ -48,8 +48,6 @@ export default function LoginPage() {
 
       const res = await login({ username: formData.username, password: formData.password })
 
-      sessionStorage.setItem('token', res.access_token)
-
       router.push("/pessoas");
 
     } catch (error) {

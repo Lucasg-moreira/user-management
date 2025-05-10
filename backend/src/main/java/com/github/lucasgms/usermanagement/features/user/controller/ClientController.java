@@ -21,16 +21,6 @@ public class ClientController {
         this.service = service;
     }
 
-    @GetMapping()
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Page<Client>> get(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam() String searchTerm
-    ) {
-        return ResponseEntity.ok(this.service.get(page, size, searchTerm));
-    }
-
     @PostMapping("/individual")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Client> createIndividualClient(
@@ -60,6 +50,16 @@ public class ClientController {
         return ResponseEntity.ok(this.service.createCompanyClient(client, userLogged));
     }
 
+    @GetMapping()
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Page<Client>> get(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam() String searchTerm
+    ) {
+        return ResponseEntity.ok(this.service.get(page, size, searchTerm));
+    }
+
     @PutMapping("/individual/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<IndividualClientDto> updateIndividualClient(
@@ -79,6 +79,14 @@ public class ClientController {
     ) {
         return ResponseEntity.ok(this.service.updateCompanyClient(dto, id));
     }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteClient(@PathVariable("id") long id) {
+        this.service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
 
 

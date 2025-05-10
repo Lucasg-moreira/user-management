@@ -59,6 +59,31 @@ public class ClientController {
 
         return ResponseEntity.ok(this.service.createCompanyClient(client, userLogged));
     }
+
+    @PutMapping("/individual/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<IndividualClientDto> updateIndividualClient(
+            @Valid
+            @RequestBody IndividualClientDto dto,
+            @PathVariable("id") long id
+    ) {
+
+        return ResponseEntity.ok(this.service.updateIndividualClient(dto, id));
+    }
+
+    @PutMapping("/company")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Client> updateCompanyClient(
+            HttpServletRequest request,
+            @RequestBody CompanyClientDto client
+    ) {
+        if (request.getAttribute("user") == null)
+            return ResponseEntity.badRequest().build();
+
+        User userLogged = (User) request.getAttribute("user");
+
+        return ResponseEntity.ok(this.service.createCompanyClient(client, userLogged));
+    }
 }
 
 

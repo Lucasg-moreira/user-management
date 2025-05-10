@@ -20,8 +20,8 @@ public abstract class Client {
 
     private Instant updatedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_keycloak_id", referencedColumnName = "keycloak_id")
     private User user;
 
     public long getId() {

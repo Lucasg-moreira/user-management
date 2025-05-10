@@ -11,16 +11,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "keycloak_id", unique = true, nullable = false)
     private String keycloakId;
 
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false)
     private String password;
 
     @OneToMany(mappedBy = "user")
     private List<Client> clients = new ArrayList<>();
 
     public User() {}
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;

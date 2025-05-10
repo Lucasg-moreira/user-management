@@ -7,6 +7,7 @@ import com.github.lucasgms.usermanagement.features.user.domain.entities.CompanyC
 import com.github.lucasgms.usermanagement.features.user.domain.entities.IndividualClient;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IClientService;
+import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IUserService;
 import com.github.lucasgms.usermanagement.features.user.repository.ClientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,14 @@ import java.time.Instant;
 public class ClientService implements IClientService {
     ClientRepository repository;
 
-    public ClientService(ClientRepository repository) {
+    IUserService userService;
+
+    public ClientService(
+            ClientRepository repository,
+            IUserService userService
+    ) {
         this.repository = repository;
+        this.userService = userService;
     }
 
     @Override
@@ -52,7 +59,10 @@ public class ClientService implements IClientService {
         IndividualClient entity = dto.toEntity();
 
         entity.setCreatedAt(Instant.now());
-        entity.setUser(userLogged);
+
+        User user = userService.findByKeycloakId(userLogged.getKeycloak_id(), true);
+
+        entity.setUser(user);
 
         return repository.save(entity);
     }

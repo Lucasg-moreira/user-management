@@ -1,5 +1,6 @@
 package com.github.lucasgms.usermanagement.features.user.service;
 
+import com.github.lucasgms.usermanagement.exception.BusinessException;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IUserService;
 import com.github.lucasgms.usermanagement.features.user.repository.UserRepository;
@@ -50,5 +51,17 @@ public class UserService implements IUserService {
     @Override
     public User findByUsername(String username) {
         return repository.findByUsername(username);
+    }
+
+
+    @Override
+    public User findByKeycloakId(String username, boolean requiredUser) {
+        var user = repository.findByKeycloakId(username);
+
+        if (user == null && requiredUser) {
+            throw new BusinessException("Usuário não encontrado!");
+        }
+
+        return user;
     }
 }

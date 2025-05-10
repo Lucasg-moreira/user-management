@@ -12,7 +12,7 @@ public class IndividualClient extends Client {
     private String name;
 
     @Embedded
-    @Column(name = "cpf")
+    @Column(name = "cpf", unique = true)
     private Cpf cpf;
 
     private LocalDate birthDate;

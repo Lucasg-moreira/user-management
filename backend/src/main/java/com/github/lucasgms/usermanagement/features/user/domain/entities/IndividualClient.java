@@ -1,5 +1,6 @@
 package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
+import com.github.lucasgms.usermanagement.features.user.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.user.domain.valueObject.Cpf;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -17,11 +18,22 @@ public class IndividualClient extends Client {
 
     private LocalDate birthDate;
 
+    public IndividualClient() {}
+
     public IndividualClient(String name, Cpf cpf, LocalDate birthDate, String telephone) {
         this.name = name;
         this.cpf = cpf;
         this.birthDate = birthDate;
         this.setTelephone(telephone);
+    }
+
+    public IndividualClientDto toDto() {
+        return new IndividualClientDto(
+                this.getTelephone(),
+                this.getName(),
+                this.getCpf(),
+                this.getBirthDate()
+        );
     }
 
     public String getName() {

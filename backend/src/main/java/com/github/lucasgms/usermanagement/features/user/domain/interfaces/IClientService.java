@@ -9,5 +9,6 @@ import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 public interface IClientService extends IBaseService<Client> {
     Client createIndividualClient(IndividualClientDto dto, User userLogged);
     Client createCompanyClient(CompanyClientDto dto, User userLogged);
-
+    IndividualClientDto updateIndividualClient(IndividualClientDto dto, long id);
+    CompanyClientDto updateCompanyClient(CompanyClientDto dto, long id);
 }

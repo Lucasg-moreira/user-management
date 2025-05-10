@@ -2,26 +2,24 @@ package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
 import jakarta.persistence.Entity;
 
-import java.time.LocalDate;
-
 @Entity
 public class CompanyClient extends Client {
-    private String name;
+    private String companyName;
+    private String fantasyName;
     private String cnpj;
-    private LocalDate tradeName;
 
-    public CompanyClient(String name, String cnpj, LocalDate tradeName) {
-        this.name = name;
+    public CompanyClient(String companyName, String cnpj, String fantasyName) {
+        this.companyName = companyName;
         this.cnpj = cnpj;
-        this.tradeName = tradeName;
+        this.fantasyName = fantasyName;
     }
 
-    public String getName() {
-        return name;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getCnpj() {
@@ -32,11 +30,12 @@ public class CompanyClient extends Client {
         this.cnpj = cnpj;
     }
 
-    public LocalDate getTradeName() {
-        return tradeName;
+    public String getFantasyName() {
+        return fantasyName;
     }
 
-    public void setTradeName(LocalDate tradeName) {
-        this.tradeName = tradeName;
+    public void setFantasyName(String fantasyName) {
+        this.fantasyName = fantasyName;
     }
+
 }

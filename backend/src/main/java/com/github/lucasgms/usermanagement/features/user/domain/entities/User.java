@@ -44,11 +44,11 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
+    public String getUsername() {
         return username;
     }
 
-    public void setEmail(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 

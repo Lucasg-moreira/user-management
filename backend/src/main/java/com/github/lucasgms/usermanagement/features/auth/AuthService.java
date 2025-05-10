@@ -66,7 +66,7 @@ public class AuthService {
 
         UserLoginDto newDto = new UserLoginDto(user.username(), hashedPassword, keycloakId);
 
-        User entity = userService.findByKeycloakId(keycloakId);
+        User entity = userService.findByKeycloakId(keycloakId, false);
 
         if (entity == null) {
             userService.create(newDto.toEntity());

@@ -1,4 +1,4 @@
-package com.github.lucasgms.usermanagement.config.Cors;
+package com.github.lucasgms.usermanagement.config.cors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

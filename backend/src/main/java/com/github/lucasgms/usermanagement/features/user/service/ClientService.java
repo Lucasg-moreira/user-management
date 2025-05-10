@@ -1,5 +1,6 @@
 package com.github.lucasgms.usermanagement.features.user.service;
 
+import com.github.lucasgms.usermanagement.exception.BusinessException;
 import com.github.lucasgms.usermanagement.features.user.domain.dtos.CompanyClientDto;
 import com.github.lucasgms.usermanagement.features.user.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.Client;
@@ -10,6 +11,8 @@ import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IClien
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IUserService;
 import com.github.lucasgms.usermanagement.features.user.repository.ClientRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -74,7 +77,10 @@ public class ClientService implements IClientService {
         CompanyClient entity = dto.toEntity();
 
         entity.setCreatedAt(Instant.now());
-        entity.setUser(userLogged);
+
+        User user = userService.findByKeycloakId(userLogged.getKeycloak_id(), true);
+
+        entity.setUser(user);
 
         return repository.save(entity);
     }

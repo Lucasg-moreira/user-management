@@ -31,7 +31,9 @@ public class ClientService implements IClientService {
 
     @Override
     public Page<Client> get(int page, int size, String searchTerm) {
-        return null;
+        Pageable pageable = PageRequest.of(page, size);
+
+        return repository.findAll(pageable);
     }
 
     @Override

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

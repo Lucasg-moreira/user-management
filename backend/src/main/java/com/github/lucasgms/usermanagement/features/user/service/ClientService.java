@@ -84,4 +84,26 @@ public class ClientService implements IClientService {
 
         return repository.save(entity);
     }
+
+    @Override
+    public IndividualClientDto updateIndividualClient(IndividualClientDto dto, long id) {
+        IndividualClient entity = (IndividualClient) repository.findById(id).orElseThrow(
+                () -> new BusinessException("Erro ao atualizar o registro.")
+        );
+
+        entity.setUpdatedAt(Instant.now());
+
+        entity.setCpf(dto.cpf());
+        entity.setName(dto.name());
+        entity.setTelephone(dto.telephone());
+
+        IndividualClient updatedEntity = repository.save(entity);
+
+        return updatedEntity.toDto();
+    }
+
+    @Override
+    public CompanyClientDto updateCompanyClient(CompanyClientDto dto, long id) {
+        return null;
+    }
 }

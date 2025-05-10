@@ -58,16 +58,17 @@ public class AuthService {
         if (!result.getStatusCode().is2xxSuccessful())
             return;
 
-        User entity = userService.findByUsername(user.username());
+        Jwt jwt = jwtDecoder.decode(result.getBody().access_token());
+
+        String keycloakId = jwt.getClaims().get("sub").toString();
+
+        String hashedPassword = hashsPassword(user.password());
+
+        UserLoginDto newDto = new UserLoginDto(user.username(), hashedPassword, keycloakId);
+
+        User entity = userService.findByKeycloakId(keycloakId);
 
         if (entity == null) {
-            String hashedPassword = hashsPassword(user.password());
-
-            Jwt jwt = jwtDecoder.decode(result.getBody().access_token());
-            String keycloakId = jwt.getClaims().get("sub").toString();
-
-            UserLoginDto newDto = new UserLoginDto(user.username(), hashedPassword, keycloakId);
-
             userService.create(newDto.toEntity());
         }
     }

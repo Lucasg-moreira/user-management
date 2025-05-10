@@ -1,6 +1,5 @@
 package com.github.lucasgms.usermanagement.features.user.controller;
 
-import com.github.lucasgms.usermanagement.features.user.domain.entities.Client;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IUserService;
 import jakarta.validation.Valid;
@@ -36,11 +35,5 @@ public class UserController {
             @RequestBody User user
             ) {
         return ResponseEntity.ok(service.create(user));
-    }
-
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String find() {
-        return "admin";
     }
 }

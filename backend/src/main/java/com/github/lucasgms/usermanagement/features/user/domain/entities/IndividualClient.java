@@ -1,16 +1,20 @@
 package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
 import com.github.lucasgms.usermanagement.features.user.domain.valueObject.Cpf;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
 @Entity
 public class IndividualClient extends Client {
+    @NotBlank(message = "Name cannot be blank")
     private String name;
+
     @Embedded
+    @Column(name = "cpf")
     private Cpf cpf;
+
     private LocalDate birthDate;
 
     public IndividualClient(String name, Cpf cpf, LocalDate birthDate, String telephone) {

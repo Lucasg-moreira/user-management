@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
+@Table(name = "client", uniqueConstraints = {
+        @UniqueConstraint(name = "unique_cnpj", columnNames = {"cnpj"}),
+        @UniqueConstraint(name = "unique_cpf", columnNames = { "cpf" })
+})
 public abstract class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

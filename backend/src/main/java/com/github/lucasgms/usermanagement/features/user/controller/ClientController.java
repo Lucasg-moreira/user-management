@@ -6,6 +6,7 @@ import com.github.lucasgms.usermanagement.features.user.domain.entities.Client;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IClientService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ public class ClientController {
     @PostMapping("/individual")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Client> createIndividualClient(
+            @Valid
             HttpServletRequest request,
             @RequestBody IndividualClientDto client) {
 

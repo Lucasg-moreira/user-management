@@ -1,12 +1,17 @@
 package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
 import com.github.lucasgms.usermanagement.features.user.domain.valueObject.Cnpj;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 
 @Entity
 public class CompanyClient extends Client {
     private String companyName;
     private String fantasyName;
+
+    @Embedded
+    @Column(name = "cnpj")
     private Cnpj cnpj;
 
     public CompanyClient(String companyName, Cnpj cnpj, String fantasyName, String telephone) {

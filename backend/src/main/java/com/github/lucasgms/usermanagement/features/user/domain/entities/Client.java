@@ -1,12 +1,13 @@
 package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "client", uniqueConstraints = {
-        @UniqueConstraint(name = "unique_cnpj", columnNames = {"cnpj"}),
+        @UniqueConstraint(name = "unique_cnpj", columnNames = { "cnpj" }),
         @UniqueConstraint(name = "unique_cpf", columnNames = { "cpf" })
 })
 public abstract class Client {
@@ -20,8 +21,9 @@ public abstract class Client {
 
     private Instant updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_keycloak_id", referencedColumnName = "keycloak_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "keycloak_id", referencedColumnName = "keycloak_id")
+    @JsonIgnore
     private User user;
 
     public long getId() {

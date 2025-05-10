@@ -104,6 +104,19 @@ public class ClientService implements IClientService {
 
     @Override
     public CompanyClientDto updateCompanyClient(CompanyClientDto dto, long id) {
-        return null;
+        CompanyClient entity = (CompanyClient) repository.findById(id).orElseThrow(
+                () -> new BusinessException("Erro ao atualizar o registro.")
+        );
+
+        entity.setUpdatedAt(Instant.now());
+
+        entity.setCnpj(dto.cnpj());
+        entity.setCompanyName(dto.companyName());
+        entity.setFantasyName(dto.fantasyName());
+        entity.setTelephone(dto.telephone());
+
+        CompanyClient updatedEntity = repository.save(entity);
+
+        return updatedEntity.toDto();
     }
 }

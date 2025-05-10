@@ -67,22 +67,17 @@ public class ClientController {
             @RequestBody IndividualClientDto dto,
             @PathVariable("id") long id
     ) {
-
         return ResponseEntity.ok(this.service.updateIndividualClient(dto, id));
     }
 
-    @PutMapping("/company")
+    @PutMapping("/company/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Client> updateCompanyClient(
-            HttpServletRequest request,
-            @RequestBody CompanyClientDto client
+    public ResponseEntity<CompanyClientDto> updateCompanyClient(
+            @Valid
+            @RequestBody CompanyClientDto dto,
+            @PathVariable("id") long id
     ) {
-        if (request.getAttribute("user") == null)
-            return ResponseEntity.badRequest().build();
-
-        User userLogged = (User) request.getAttribute("user");
-
-        return ResponseEntity.ok(this.service.createCompanyClient(client, userLogged));
+        return ResponseEntity.ok(this.service.updateCompanyClient(dto, id));
     }
 }
 

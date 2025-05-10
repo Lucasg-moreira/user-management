@@ -1,5 +1,6 @@
 package com.github.lucasgms.usermanagement.features.user.domain.entities;
 
+import com.github.lucasgms.usermanagement.features.user.domain.dtos.CompanyClientDto;
 import com.github.lucasgms.usermanagement.features.user.domain.valueObject.Cnpj;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -22,6 +23,15 @@ public class CompanyClient extends Client {
         this.fantasyName = fantasyName;
 
         this.setTelephone(telephone);
+    }
+
+    public CompanyClientDto toDto() {
+        return new CompanyClientDto(
+                this.getCompanyName(),
+                this.getFantasyName(),
+                this.getCnpj(),
+                this.getTelephone()
+        );
     }
 
     public String getCompanyName() {

@@ -1,6 +1,7 @@
 package com.github.lucasgms.usermanagement.features.client.service;
 
 import com.github.lucasgms.usermanagement.exception.BusinessException;
+import com.github.lucasgms.usermanagement.features.client.domain.dtos.ClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.CompanyClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.entities.Client;
@@ -38,33 +39,26 @@ public class ClientService implements IClientService {
 
         var result = repository.findAll(pageable);
 
-
         return result
-                .map(client -> {
-                    if (client instanceof IndividualClient) {
-                        IndividualClient individualClient = (IndividualClient) client;
+                .map(client -> client.toClientDto(client));
+    }
 
-                        return new ClientDto(
-                                client.getId(),
-                                client.getCreatedAt(),
-                                individualClient.getName(),
-                                individualClient.getCpf().getValue()
-                        );
-                    }
+    private static ClientDto getClientDto(Client client, CompanyClient companyClient) {
+        return new ClientDto(
+                client.getId(),
+                client.getCreatedAt(),
+                companyClient.getCompanyName(),
+                companyClient.getCnpj().getValue()
+        );
+    }
 
-                    if (client instanceof CompanyClient) {
-                        CompanyClient companyClient = (CompanyClient) client;
-
-                        return new ClientDto(
-                                client.getId(),
-                                client.getCreatedAt(),
-                                companyClient.getCompanyName(),
-                                companyClient.getCnpj().getValue()
-                        );
-                    }
-
-                    return null;
-                });
+    private static ClientDto getClientDto(Client client, IndividualClient individualClient) {
+        return new ClientDto(
+                client.getId(),
+                client.getCreatedAt(),
+                individualClient.getName(),
+                individualClient.getCpf().getValue()
+        );
     }
 
     @Override
@@ -79,7 +73,9 @@ public class ClientService implements IClientService {
 
     @Override
     public Client findById(long id) {
-        return null;
+
+        return repository.findById(id)
+                .orElseThrow(() -> new BusinessException("Usuário não encontrado"));
     }
 
     @Override

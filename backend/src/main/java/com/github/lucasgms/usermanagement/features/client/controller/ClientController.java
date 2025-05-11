@@ -61,6 +61,14 @@ public class ClientController {
         return ResponseEntity.ok(this.service.findAllClients(page, size, searchTerm));
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Client> getClientById(
+            @PathVariable("id") long id
+            ) {
+        return ResponseEntity.ok(this.service.findById(id));
+    }
+
     @PutMapping("/individual/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<IndividualClientDto> updateIndividualClient(

@@ -2,6 +2,7 @@ package com.github.lucasgms.usermanagement.features.client.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.lucasgms.usermanagement.features.auth.domain.entities.User;
+import com.github.lucasgms.usermanagement.features.client.domain.dtos.ClientDto;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -26,6 +27,34 @@ public abstract class Client {
     @JoinColumn(name = "keycloak_id", referencedColumnName = "keycloak_id")
     @JsonIgnore
     private User user;
+
+    public ClientDto toClientDto(Client client) {
+        if (client instanceof IndividualClient individualClient) {
+            return new ClientDto(
+                    client.getId(),
+                    client.getCreatedAt(),
+                    individualClient.getName(),
+                    individualClient.getCpf().getValue()
+            );
+        }
+
+        if (client instanceof CompanyClient companyClient) {
+            return new ClientDto(
+                    client.getId(),
+                    client.getCreatedAt(),
+                    companyClient.getCompanyName(),
+                    companyClient.getCnpj().getValue()
+            );
+        }
+
+        return new ClientDto(
+                client.getId(),
+                client.getCreatedAt(),
+                "Unknown",
+                "Unknown"
+        );
+
+    }
 
     public long getId() {
         return id;

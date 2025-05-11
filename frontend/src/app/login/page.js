@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/utils/api";
+import { setRefreshToken } from "../components/clientSessionCheck";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
@@ -49,7 +50,7 @@ export default function LoginPage() {
 
       const res = await api.post(`${apiUrl}/auth`, { username: formData.username, password: formData.password })
 
-      sessionStorage.setItem("refresh_token", JSON.stringify(res))
+      setRefreshToken(JSON.stringify(res))
 
       router.push("/pessoas");
 

@@ -1,31 +1,29 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Filters } from "../components/filters";
-import { Table } from "../components/table";
+import { Filters } from "./components/filters";
+import { Table } from "./components/table";
+import { api } from "@/utils/api";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function PeoplePage() {
   const router = useRouter();
-  const [people, setPeople] = useState([
-    { 
-      id: 1, 
-      name: "João Silva", 
-      email: "joao@email.com", 
-      document: "123.456.789-00", 
-      personType: "pf",
-      status: "active" 
-    },
-    { 
-      id: 2, 
-      name: "Empresa XYZ", 
-      businessName: "Empresa XYZ Comércio e Serviços Ltda",
-      email: "contato@xyz.com", 
-      document: "12.345.678/0001-90", 
-      personType: "pj",
-      status: "inactive" 
-    },
-  ]);
+
+  const [clients, setClients] = useState([]);
+
+  const [data, setData] = useState()
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await api.get(`${apiUrl}/client?searchTerm=''`)
+      console.log('fetchData', response.content)
+      setClients(response.content)
+    }
+
+    fetchData()
+  }, [])
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -69,12 +67,12 @@ export default function PeoplePage() {
         <Filters onFilter={handleFilter} />
 
         <Table 
-          people={people}
+          people={clients}
           onEdit={handleEdit}
           onDelete={handleDelete}
           currentPage={currentPage}
           itemsPerPage={itemsPerPage}
-          totalItems={people.length}
+          totalItems={clients.length}
           onPageChange={handlePageChange}
           onItemsPerPageChange={handleItemsPerPageChange}
         />

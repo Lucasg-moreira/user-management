@@ -33,10 +33,43 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public Page<Client> get(int page, int size, String searchTerm) {
+    public Page<ClientDto> findAllClients(int page, int size, String searchTerm) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return repository.findAll(pageable);
+        var result = repository.findAll(pageable);
+
+
+        return result
+                .map(client -> {
+                    if (client instanceof IndividualClient) {
+                        IndividualClient individualClient = (IndividualClient) client;
+
+                        return new ClientDto(
+                                client.getId(),
+                                client.getCreatedAt(),
+                                individualClient.getName(),
+                                individualClient.getCpf().getValue()
+                        );
+                    }
+
+                    if (client instanceof CompanyClient) {
+                        CompanyClient companyClient = (CompanyClient) client;
+
+                        return new ClientDto(
+                                client.getId(),
+                                client.getCreatedAt(),
+                                companyClient.getCompanyName(),
+                                companyClient.getCnpj().getValue()
+                        );
+                    }
+
+                    return null;
+                });
+    }
+
+    @Override
+    public Page<Client> get(int page, int size, String searchTerm) {
+        return null;
     }
 
     @Override

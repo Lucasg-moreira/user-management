@@ -1,5 +1,6 @@
 package com.github.lucasgms.usermanagement.features.client.controller;
 
+import com.github.lucasgms.usermanagement.features.client.domain.dtos.ClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.CompanyClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.entities.Client;
@@ -52,12 +53,12 @@ public class ClientController {
 
     @GetMapping()
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Page<Client>> get(
+    public ResponseEntity<Page<ClientDto>> get(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam() String searchTerm
     ) {
-        return ResponseEntity.ok(this.service.get(page, size, searchTerm));
+        return ResponseEntity.ok(this.service.findAllClients(page, size, searchTerm));
     }
 
     @PutMapping("/individual/{id}")

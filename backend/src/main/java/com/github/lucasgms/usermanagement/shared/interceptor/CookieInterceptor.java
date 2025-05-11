@@ -16,6 +16,7 @@ public class CookieInterceptor implements HandlerInterceptor {
     JWTConverter jwtConverter;
 
     public CookieInterceptor() {}
+
     public CookieInterceptor(JwtDecoder jwtDecoder, JWTConverter jwtConverter) {
         this.jwtDecoder = jwtDecoder;
         this.jwtConverter = jwtConverter;
@@ -24,6 +25,10 @@ public class CookieInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
             Cookie[] cookies = request.getCookies();
+
+            if (cookies == null) {
+                return true;
+            }
 
             for (Cookie cookie : cookies) {
                 if ("userToken".equals(cookie.getName())) {

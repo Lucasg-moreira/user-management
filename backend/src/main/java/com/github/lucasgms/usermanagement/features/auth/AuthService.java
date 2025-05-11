@@ -1,10 +1,14 @@
 package com.github.lucasgms.usermanagement.features.auth;
 
 import com.github.lucasgms.usermanagement.exception.BusinessException;
+import com.github.lucasgms.usermanagement.features.auth.dtos.RefreshTokenDto;
 import com.github.lucasgms.usermanagement.features.auth.dtos.TokenDto;
 import com.github.lucasgms.usermanagement.features.auth.dtos.UserLoginDto;
 import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import com.github.lucasgms.usermanagement.features.user.domain.interfaces.IUserService;
+import com.github.lucasgms.usermanagement.shared.utils.TokenUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.Instant;
 
 @Service
 public class AuthService {
@@ -36,9 +42,11 @@ public class AuthService {
         this.userService = userService;
     }
 
-    public TokenDto login(UserLoginDto user) {
-        HttpHeaders headers = new HttpHeaders();
+    public RefreshTokenDto login(UserLoginDto user, HttpServletResponse response) {
         RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> formData = getCredentialsKeyCloak(user);
@@ -51,7 +59,13 @@ public class AuthService {
 
         createUser(user, result);
 
-        return result.getBody();
+        setCookie(response, result);
+
+        int fourMinutes = 240;
+
+        Instant expiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
+
+        return result.getBody().toRefreshToken(expiredDate);
     }
 
     private void createUser(UserLoginDto user, ResponseEntity<TokenDto> result) {
@@ -88,7 +102,7 @@ public class AuthService {
         return formData;
     }
 
-    public TokenDto refreshToken(String refreshToken) {
+    public RefreshTokenDto refreshToken(String refreshToken, HttpServletResponse response) {
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -107,7 +121,23 @@ public class AuthService {
 
         validateKeycloakApiResponse(result);
 
-        return result.getBody();
+        setCookie(response, result);
+
+        int fourMinutes = 240;
+
+        Instant expiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
+
+        return result.getBody().toRefreshToken(expiredDate);
+    }
+
+    private void setCookie(HttpServletResponse response, ResponseEntity<TokenDto> result) {
+        Cookie cookie = new Cookie("userToken", result.getBody().access_token());
+
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(300);
+
+        response.addCookie(cookie);
     }
 
     private static void validateKeycloakApiResponse(ResponseEntity<TokenDto> result) {

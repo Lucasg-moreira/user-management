@@ -6,11 +6,18 @@ import { getRefreshedToken } from '../login/loginService'
 
 export const validateCookieDate = (refreshToken) => {
     let expirationDate = new Date(refreshToken.tokenExpiration)
+
+    let now = new Date().getTime()
+
+    return (now < expirationDate.getTime())
+}
+
+export const validateRefreshToken = (refreshToken) => {
     let refreshExpirationDate = new Date(refreshToken.refreshExpiration)
 
     let now = new Date().getTime()
 
-    return (now < expirationDate.getTime() && now < refreshExpirationDate.getTime())
+    return (now < refreshExpirationDate.getTime())
 }
 
 export const getAccessToken = () => {
@@ -22,17 +29,28 @@ export const getAccessToken = () => {
     return JSON.parse(refreshToken)
 }
 
+export const setRefreshToken = (refreshToken) => {
+    sessionStorage.setItem('refresh_token', refreshToken)
+} 
+
 export default function ClientSessionCheck({ children }) {
     const router = useRouter()
 
     useEffect(() => {
         let token = getAccessToken()
 
-        if (validateCookieDate(token)) {
-            getRefreshedToken(token)
-        }
-        else {
-            router.push('/login')
+        if (!validateCookieDate(token)) {
+            if (validateRefreshToken(token)){
+                getRefreshedToken(token).then(
+                    t => {
+                        setRefreshToken(JSON.stringify(t))
+                        router.refresh()
+                    }
+                )
+            }
+            else {
+                router.push('/login')
+            }
         }
 
         return () => {}

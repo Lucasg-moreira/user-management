@@ -68,10 +68,6 @@ export const formatCPF = (cpf) => {
   return `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-${cpf.slice(9, 11)}`;
 };
 
-export const removeFormat = (cpf) => {
-  return cpf.replace(/[.\-/]/g, '');
-}
-
 export const formatCNPJ = (cnpj) => {
   cnpj = cnpj.replace(/[^\d]/g, '');
   if (cnpj.length <= 2) return cnpj;
@@ -80,3 +76,7 @@ export const formatCNPJ = (cnpj) => {
   if (cnpj.length <= 12) return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8)}`;
   return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12, 14)}`;
 };
+
+export const removeFormat = (cpf) => {
+  return cpf.replace(/[.\-/]/g, '');
+}

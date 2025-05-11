@@ -12,8 +12,8 @@ public record TokenDto(
         int refresh_expires_in,
         int not_before_policy
 ) {
-    public RefreshTokenDto toRefreshToken(Instant tokenExpiration) {
-        return new RefreshTokenDto(refresh_token, token_type, refresh_expires_in, tokenExpiration);
+    public RefreshTokenDto toRefreshToken(Instant tokenExpiration, Instant refreshExpiration) {
+        return new RefreshTokenDto(refresh_token, token_type, refresh_expires_in, tokenExpiration, refreshExpiration);
     }
 }
 

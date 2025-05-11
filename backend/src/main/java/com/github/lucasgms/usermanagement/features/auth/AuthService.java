@@ -62,10 +62,12 @@ public class AuthService {
         setCookie(response, result);
 
         int fourMinutes = 240;
+        int thirtyMinutes = 1800;
 
-        Instant expiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
+        Instant accessTokenExpiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
+        Instant refreshTokenExpiredDate = TokenUtils.createExpiredDateToken(thirtyMinutes);
 
-        return result.getBody().toRefreshToken(expiredDate);
+        return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate);
     }
 
     private void createUser(UserLoginDto user, ResponseEntity<TokenDto> result) {
@@ -124,10 +126,12 @@ public class AuthService {
         setCookie(response, result);
 
         int fourMinutes = 240;
+        int thirtyMinutes = 1800;
 
-        Instant expiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
+        Instant accessTokenExpiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
+        Instant refreshTokenExpiredDate = TokenUtils.createExpiredDateToken(thirtyMinutes);
 
-        return result.getBody().toRefreshToken(expiredDate);
+        return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate);
     }
 
     private void setCookie(HttpServletResponse response, ResponseEntity<TokenDto> result) {

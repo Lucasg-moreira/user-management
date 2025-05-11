@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtCookieFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/h2-console/**", "/auth")
+                    auth.requestMatchers("/h2-console/**", "/auth/**")
                             .permitAll()
                             .anyRequest()
                             .authenticated();

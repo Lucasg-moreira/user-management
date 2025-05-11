@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.Map;
 
 @RequestMapping("/auth")
@@ -27,9 +26,9 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<RefreshTokenDto> refreshToken(@RequestBody Map<String, String> refreshToken, HttpServletResponse response) {
+    public ResponseEntity<RefreshTokenDto> refreshToken(@RequestBody RefreshTokenDto refreshToken, HttpServletResponse response) {
 
-        RefreshTokenDto token = service.refreshToken(refreshToken.get("refresh_token"), response);
+        RefreshTokenDto token = service.refreshToken(refreshToken.refresh_token(), response);
 
         return ResponseEntity.ok(token);
     }

@@ -6,5 +6,6 @@ public record RefreshTokenDto(
         String refresh_token,
         String token_type,
         int refresh_expires_in,
-        Instant tokenExpiration
+        Instant tokenExpiration,
+        Instant refreshExpiration
 ) { }

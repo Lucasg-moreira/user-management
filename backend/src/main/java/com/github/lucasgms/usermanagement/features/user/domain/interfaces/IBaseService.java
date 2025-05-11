@@ -1,7 +1,5 @@
 package com.github.lucasgms.usermanagement.features.user.domain.interfaces;
 
-import com.github.lucasgms.usermanagement.features.user.domain.entities.Client;
-import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
 import org.springframework.data.domain.Page;
 
 public interface IBaseService<T> {

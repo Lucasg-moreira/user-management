@@ -33,7 +33,7 @@ export default function PeoplePage() {
   }, []);
 
   const handleEdit = useCallback((person) => {
-    console.log("Edit person:", person);
+    router.push(`pessoas/${person.id}/edit`)
   }, []);
 
   const handleDelete = useCallback((id) => {

@@ -1,7 +1,7 @@
 import { handleGlobalError } from './globalErrorHandler';
 
 export const api = {
-  async post(url, data) {
+  async post(url = `${API_URL}/client/individual`, data) {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -22,7 +22,7 @@ export const api = {
   },
 
   async get(url) {
-    const response = await fetch(url, {credentials: 'include'});
+    const response = await fetch(url, { credentials: 'include'});
     const data = await response.json();
 
     if (!response.ok) {

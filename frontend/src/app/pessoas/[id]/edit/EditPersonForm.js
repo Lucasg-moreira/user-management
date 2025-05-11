@@ -1,20 +1,18 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { formatCNPJ, formatCPF, removeFormat, validateCNPJ, validateCPF } from "@/utils/utils";
-import {IndividualPersonForm} from "./components/IndividualPersonForm";
-import {CompanyPersonForm} from "./components/CompanyPersonForm";
-import { createPerson } from "../personService";
+import { IndividualPersonForm } from "../../nova/components/IndividualPersonForm";
+import { CompanyPersonForm } from "../../nova/components/CompanyPersonForm";
 import { useFormError } from "@/hooks/useFormError";
 import { AppError, ErrorCodes } from "@/utils/errorHandler";
-
-import { api } from '@/utils/api';
+import { api } from "@/utils/api";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
-export default function NewPersonPage() {
+export function EditPersonForm({ id }) {
   const router = useRouter();
   const { error, fieldErrors, handleFormError, clearErrors, getFieldError } = useFormError();
   
@@ -30,6 +28,30 @@ export default function NewPersonPage() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPerson = async () => {
+        const data = await api.get(`${apiUrl}/client/${id}`);
+        const cpfValue = data.cpf?.value || data.cpf || "";
+        const cnpjValue = data.cnpj?.value || data.cnpj || "";
+        
+        setFormData({
+          name: data.name || "",
+          telephone: data.telephone || "",
+          cpf: cpfValue ? formatCPF(cpfValue) : "",
+          birthDate: data.birthDate || "",
+          companyName: data.companyName || "",
+          fantasyName: data.fantasyName || "",
+          cnpj: cnpjValue ? formatCNPJ(cnpjValue) : "",
+          personType: cpfValue ? "pf" : "pj"
+        });
+        
+        setIsInitialLoading(false);
+    };
+
+    fetchPerson();
+  }, [id, handleFormError]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -67,7 +89,6 @@ export default function NewPersonPage() {
   const validateForm = useCallback(() => {
     const errors = {};
 
-
     if (!formData.telephone) {
       errors.telephone = 'Telefone é obrigatório';
     }
@@ -78,13 +99,13 @@ export default function NewPersonPage() {
       } else if (!validateCPF(formData.cpf)) {
         errors.cpf = 'CPF inválido';
       }
-      
-      if (!formData.birthDate) {
-        errors.birthDate = 'Data de nascimento é obrigatória';
-      }
 
       if (!formData.name) {
         errors.name = 'Nome é obrigatório';
+      }
+
+      if (!formData.birthDate) {
+        errors.birthDate = 'Data de nascimento é obrigatória';
       }
     } else {
       if (!formData.companyName) {
@@ -101,7 +122,6 @@ export default function NewPersonPage() {
     }
 
     if (Object.keys(errors).length > 0) {
-      console.log(errors)
       throw new AppError('Por favor, corrija os erros no formulário', ErrorCodes.VALIDATION_ERROR, errors);
     }
 
@@ -116,7 +136,7 @@ export default function NewPersonPage() {
       validateForm();
       setIsLoading(true);
 
-      const clientData = {
+      const personData = {
         ...formData,
         type: formData.personType,
         ...(formData.personType === 'pf' 
@@ -124,24 +144,45 @@ export default function NewPersonPage() {
           : { cpf: undefined, birthDate: undefined }
         )
       };
-    
-      if (clientData.type === 'pf') {
-        clientData.cpf = removeFormat(clientData.cpf)
-        await api.post(`${apiUrl}/client/individual`, clientData);
-      }
-      else {
-        clientData.cnpj = removeFormat(clientData.cnpj)
-        await api.post(`${apiUrl}/client/company`, clientData);
+
+      if (formData.personType === 'pf') {
+        personData.cpf = removeFormat(personData.cpf)
+        await api.put(`${apiUrl}/client/individual/${id}`, personData);
+
+      } else {
+        personData.cnpj = removeFormat(personData.cnpj)
+
+        await api.put(`${apiUrl}/client/company/${id}`, personData);
       }
 
       router.push("/pessoas");
+      
     } catch (error) {
       handleFormError(error);
-      console.error('Error creating person:', error);
+      console.error('Error updating person:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [formData, validateForm, router, handleFormError, clearErrors]);
+  }, [formData, validateForm, router, handleFormError, clearErrors, id]);
+
+  if (isInitialLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-6"></div>
+              <div className="space-y-4">
+                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
@@ -149,7 +190,7 @@ export default function NewPersonPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Novo cliente
+              Editar cliente
             </h1>
             <button
               onClick={() => router.back()}

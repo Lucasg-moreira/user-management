@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { submitClientForm } from "./loginController";
 import { login } from "./loginService";
 
 const INITIAL_FORM_STATE = {
@@ -47,6 +46,10 @@ export default function LoginPage() {
       setIsLoading(true);
 
       const res = await login({ username: formData.username, password: formData.password })
+
+      console.log(res)
+
+      sessionStorage.setItem("refresh_token", JSON.stringify(res))
 
       router.push("/pessoas");
 

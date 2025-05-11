@@ -1,7 +1,7 @@
 package com.github.lucasgms.usermanagement.shared.interceptor;
 
 import com.github.lucasgms.usermanagement.config.security.JWTConverter;
-import com.github.lucasgms.usermanagement.features.user.domain.entities.User;
+import com.github.lucasgms.usermanagement.features.auth.domain.entities.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

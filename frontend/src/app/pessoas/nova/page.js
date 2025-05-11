@@ -3,11 +3,20 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { formatCNPJ, formatCPF, validateCNPJ, validateCPF } from "@/utils/utils";
-import IndividualPersonForm from "./components/IndividualPersonForm";
-import CompanyPersonForm from "./components/CompanyPersonForm";
+import {IndividualPersonForm} from "./components/IndividualPersonForm";
+import {CompanyPersonForm} from "./components/CompanyPersonForm";
+import { useFormError } from "@/hooks/useFormError";
+import { AppError, ErrorCodes } from "@/utils/errorHandler";
+
+import { api } from '@/utils/api';
+
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
 export default function NewPersonPage() {
   const router = useRouter();
+  const { error, fieldErrors, handleFormError, clearErrors, getFieldError } = useFormError();
   
   const [formData, setFormData] = useState({
     name: "",
@@ -21,10 +30,10 @@ export default function NewPersonPage() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
+    clearErrors();
 
     if (name === 'cpf') {
       setFormData(prev => ({
@@ -51,55 +60,78 @@ export default function NewPersonPage() {
         [name]: value
       }));
     }
-  }, []);
+  }, [clearErrors]);
 
   const validateForm = useCallback(() => {
-    if (!formData.name || !formData.telephone) {
-      setError("Por favor, preencha todos os campos obrigatórios");
-      return false;
+    const errors = {};
+
+    if (!formData.name) {
+      errors.name = 'Nome é obrigatório';
+    }
+    if (!formData.telephone) {
+      errors.telephone = 'Telefone é obrigatório';
     }
 
     if (formData.personType === 'pf') {
-      if (!formData.cpf || !formData.birthDate) {
-        setError("Por favor, preencha todos os campos obrigatórios");
-        return false;
+      if (!formData.cpf) {
+        errors.cpf = 'CPF é obrigatório';
+      } else if (!validateCPF(formData.cpf)) {
+        errors.cpf = 'CPF inválido';
       }
-      if (!validateCPF(formData.cpf)) {
-        setError("Por favor, insira um CPF válido");
-        return false;
+      if (!formData.birthDate) {
+        errors.birthDate = 'Data de nascimento é obrigatória';
       }
     } else {
-      if (!formData.companyName || !formData.fantasyName || !formData.cnpj) {
-        setError("Por favor, preencha todos os campos obrigatórios");
-        return false;
+      if (!formData.companyName) {
+        errors.companyName = 'Razão social é obrigatória';
       }
-      if (!validateCNPJ(formData.cnpj)) {
-        setError("Por favor, insira um CNPJ válido");
-        return false;
+      if (!formData.fantasyName) {
+        errors.fantasyName = 'Nome fantasia é obrigatório';
+      }
+      if (!formData.cnpj) {
+        errors.cnpj = 'CNPJ é obrigatório';
+      } else if (!validateCNPJ(formData.cnpj)) {
+        errors.cnpj = 'CNPJ inválido';
       }
     }
+
+    if (Object.keys(errors).length > 0) {
+      throw new AppError('Por favor, corrija os erros no formulário', ErrorCodes.VALIDATION_ERROR, errors);
+    }
+
     return true;
   }, [formData]);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    clearErrors();
 
     try {
+      validateForm();
       setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const clientData = {
+        ...formData,
+        type: formData.personType,
+        ...(formData.personType === 'pf' 
+          ? { companyName: undefined, fantasyName: undefined, cnpj: undefined }
+          : { cpf: undefined, birthDate: undefined }
+        )
+      };
+    
+      if (clientData.type === 'pf') 
+        await api.post(`${API_URL}/client/individual`, clientData);
+      else
+        await api.post(`${API_URL}/client/company`, clientData);
 
       router.push("/pessoas");
     } catch (error) {
-      setError("Ocorreu um erro ao salvar a pessoa");
-      console.error("Error saving:", error);
+      handleFormError(error);
+      console.error('Error creating person:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [formData, validateForm, router]);
+  }, [formData, validateForm, router, handleFormError, clearErrors]);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
@@ -123,7 +155,7 @@ export default function NewPersonPage() {
             </div>
           )}
 
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="personType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Tipo de Pessoa *
@@ -146,12 +178,14 @@ export default function NewPersonPage() {
                 formData={formData}
                 handleChange={handleChange}
                 isLoading={isLoading}
+                getFieldError={getFieldError}
               />
             ) : (
               <CompanyPersonForm
                 formData={formData}
                 handleChange={handleChange}
                 isLoading={isLoading}
+                getFieldError={getFieldError}
               />
             )}
 
@@ -165,8 +199,7 @@ export default function NewPersonPage() {
                 Cancelar
               </button>
               <button
-                onClick={handleSubmit}
-                type="button"
+                type="submit"
                 disabled={isLoading}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
               >

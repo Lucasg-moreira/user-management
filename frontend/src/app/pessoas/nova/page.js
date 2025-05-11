@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { formatCNPJ, formatCPF, validateCNPJ, validateCPF } from "@/utils/utils";
+import { formatCNPJ, formatCPF, removeFormat, validateCNPJ, validateCPF } from "@/utils/utils";
 import {IndividualPersonForm} from "./components/IndividualPersonForm";
 import {CompanyPersonForm} from "./components/CompanyPersonForm";
 import { useFormError } from "@/hooks/useFormError";
@@ -119,10 +119,14 @@ export default function NewPersonPage() {
         )
       };
     
-      if (clientData.type === 'pf') 
+      if (clientData.type === 'pf') {
+        clientData.cpf = removeFormat(clientData.cpf)
         await api.post(`${API_URL}/client/individual`, clientData);
-      else
+      }
+      else {
+        clientData.cnpj = removeFormat(clientData.cnpj)
         await api.post(`${API_URL}/client/company`, clientData);
+      }
 
       router.push("/pessoas");
     } catch (error) {

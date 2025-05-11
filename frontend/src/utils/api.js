@@ -8,6 +8,7 @@ export const api = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      credentials: 'include'
     });
 
     const responseData = await response.json();
@@ -21,7 +22,7 @@ export const api = {
   },
 
   async get(url) {
-    const response = await fetch(url);
+    const response = await fetch(url, {credentials: 'include'});
     const data = await response.json();
 
     if (!response.ok) {
@@ -38,6 +39,7 @@ export const api = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      credentials: 'include'
     });
 
     const responseData = await response.json();
@@ -52,6 +54,7 @@ export const api = {
   async delete(url) {
     const response = await fetch(url, {
       method: 'DELETE',
+      credentials: 'include'
     });
 
     const data = await response.json();

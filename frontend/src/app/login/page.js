@@ -2,7 +2,9 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "./loginService";
+import { api } from "@/utils/api";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const INITIAL_FORM_STATE = {
   username: '',
@@ -45,9 +47,7 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
 
-      const res = await login({ username: formData.username, password: formData.password })
-
-      console.log(res)
+      const res = await api.post(`${apiUrl}/auth`, { username: formData.username, password: formData.password })
 
       sessionStorage.setItem("refresh_token", JSON.stringify(res))
 

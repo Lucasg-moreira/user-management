@@ -3,39 +3,47 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { formatCNPJ, formatCPF, validateCNPJ, validateCPF } from "@/utils/utils";
+import IndividualPersonForm from "./components/IndividualPersonForm";
+import CompanyPersonForm from "./components/CompanyPersonForm";
 
 export default function NewPersonPage() {
   const router = useRouter();
+  
   const [formData, setFormData] = useState({
     name: "",
-    businessName: "",
-    email: "",
-    document: "",
-    personType: "pf",
-    status: "active"
+    telephone: "",
+    cpf: "",
+    birthDate: "",
+    companyName: "",
+    fantasyName: "",
+    cnpj: "",
+    personType: "pf"
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
 
-    if (name === 'document') {
-      const formattedValue = formData.personType === 'pf'
-        ? formatCPF(value)
-        : formatCNPJ(value);
-
+    if (name === 'cpf') {
       setFormData(prev => ({
         ...prev,
-        [name]: formattedValue
+        [name]: formatCPF(value)
       }));
-
+    } else if (name === 'cnpj') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: formatCNPJ(value)
+      }));
     } else if (name === 'personType') {
       setFormData(prev => ({
         ...prev,
         personType: value,
-        document: "",
-        businessName: value === 'pf' ? "" : prev.businessName
+        cpf: "",
+        cnpj: "",
+        companyName: value === 'pf' ? "" : prev.companyName,
+        fantasyName: value === 'pf' ? "" : prev.fantasyName
       }));
     } else {
       setFormData(prev => ({
@@ -43,28 +51,32 @@ export default function NewPersonPage() {
         [name]: value
       }));
     }
-  }, [formData.personType]);
+  }, []);
 
   const validateForm = useCallback(() => {
-    if (!formData.name || !formData.email || !formData.document) {
+    if (!formData.name || !formData.telephone) {
       setError("Por favor, preencha todos os campos obrigatórios");
       return false;
     }
-    if (formData.personType === 'pj' && !formData.businessName) {
-      setError("Por favor, preencha a razão social");
-      return false;
-    }
-    if (!formData.email.includes("@")) {
-      setError("Por favor, insira um email válido");
-      return false;
-    }
-    if (formData.personType === 'pf' && !validateCPF(formData.document)) {
-      setError("Por favor, insira um CPF válido");
-      return false;
-    }
-    if (formData.personType === 'pj' && !validateCNPJ(formData.document)) {
-      setError("Por favor, insira um CNPJ válido");
-      return false;
+
+    if (formData.personType === 'pf') {
+      if (!formData.cpf || !formData.birthDate) {
+        setError("Por favor, preencha todos os campos obrigatórios");
+        return false;
+      }
+      if (!validateCPF(formData.cpf)) {
+        setError("Por favor, insira um CPF válido");
+        return false;
+      }
+    } else {
+      if (!formData.companyName || !formData.fantasyName || !formData.cnpj) {
+        setError("Por favor, preencha todos os campos obrigatórios");
+        return false;
+      }
+      if (!validateCNPJ(formData.cnpj)) {
+        setError("Por favor, insira um CNPJ válido");
+        return false;
+      }
     }
     return true;
   }, [formData]);
@@ -95,7 +107,7 @@ export default function NewPersonPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Nova Pessoa
+              Novo cliente
             </h1>
             <button
               onClick={() => router.back()}
@@ -129,89 +141,19 @@ export default function NewPersonPage() {
               </select>
             </div>
 
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {formData.personType === 'pf' ? 'Nome *' : 'Nome Fantasia *'}
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50"
-                placeholder={formData.personType === 'pf' ? "Digite o nome" : "Digite o nome fantasia"}
+            {formData.personType === 'pf' ? (
+              <IndividualPersonForm
+                formData={formData}
+                handleChange={handleChange}
+                isLoading={isLoading}
               />
-            </div>
-
-            {formData.personType === 'pj' && (
-              <div>
-                <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Razão Social *
-                </label>
-                <input
-                  type="text"
-                  id="businessName"
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50"
-                  placeholder="Digite a razão social"
-                />
-              </div>
+            ) : (
+              <CompanyPersonForm
+                formData={formData}
+                handleChange={handleChange}
+                isLoading={isLoading}
+              />
             )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email *
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50"
-                placeholder="Digite o email"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="document" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {formData.personType === 'pf' ? 'CPF *' : 'CNPJ *'}
-              </label>
-              <input
-                type="text"
-                id="document"
-                name="document"
-                value={formData.document}
-                onChange={handleChange}
-                disabled={isLoading}
-                maxLength={formData.personType === 'pf' ? 14 : 18}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50"
-                placeholder={formData.personType === 'pf' ? "000.000.000-00" : "00.000.000/0000-00"}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Status
-              </label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                disabled={isLoading}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50"
-              >
-                <option value="active">Ativo</option>
-                <option value="inactive">Inativo</option>
-              </select>
-            </div>
 
             <div className="flex justify-end space-x-4">
               <button

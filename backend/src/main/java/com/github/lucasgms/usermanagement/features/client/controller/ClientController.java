@@ -26,14 +26,14 @@ public class ClientController {
     public ResponseEntity<Client> createIndividualClient(
             @Valid
             HttpServletRequest request,
-            @RequestBody IndividualClientDto client) {
+            @RequestBody IndividualClientDto dto) {
 
         if (request.getAttribute("user") == null)
             return ResponseEntity.badRequest().build();
 
         User userLogged = (User) request.getAttribute("user");
 
-        return ResponseEntity.ok(this.service.createIndividualClient(client, userLogged));
+        return ResponseEntity.ok(this.service.createIndividualClient(dto, userLogged));
     }
 
     @PostMapping("/company")

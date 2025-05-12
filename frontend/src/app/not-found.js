@@ -16,7 +16,7 @@ export default function NotFound() {
         
         <div className="flex flex-col space-y-4">
           <Link 
-            href="/"
+            href="/pessoas"
             className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]"
           >
             Voltar para a página inicial

@@ -8,7 +8,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,16 +33,17 @@ public class SecurityConfig {
                         oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(new JWTConverter())))
                 .addFilterBefore(jwtCookieFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/h2-console/**", "/auth/**")
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated();
-                }
-        ).headers(headers ->
-                headers.addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy", "frame-ancestors 'self'")
-                )
-        );
+//        http.authorizeHttpRequests(auth -> {
+//                    auth.requestMatchers("/h2-console/**", "/auth/**")
+//                            .permitAll()
+//                            .anyRequest()
+//                            .authenticated();
+//                }
+//        ).headers(headers ->
+//                headers.addHeaderWriter(new StaticHeadersWriter("Content-Security-Policy", "frame-ancestors 'self'")
+//                )
+//        );
+
         return http.build();
     }
 

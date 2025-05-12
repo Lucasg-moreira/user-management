@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { formatCNPJ, formatCPF, removeFormat, validateCNPJ, validateCPF } from "@/utils/utils";
 import {IndividualPersonForm} from "./components/IndividualPersonForm";
 import {CompanyPersonForm} from "./components/CompanyPersonForm";
-import { createPerson } from "../personService";
 import { useFormError } from "@/hooks/useFormError";
 import { AppError, ErrorCodes } from "@/utils/errorHandler";
 

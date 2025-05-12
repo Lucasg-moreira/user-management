@@ -57,7 +57,7 @@ public class AuthService {
 
         validateKeycloakApiResponse(result);
 
-        createUser(user, result);
+        User createdUser = createUser(user, result);
 
         setCookie(response, result);
 
@@ -67,12 +67,12 @@ public class AuthService {
         Instant accessTokenExpiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
         Instant refreshTokenExpiredDate = TokenUtils.createExpiredDateToken(thirtyMinutes);
 
-        return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate);
+        return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate, createdUser.toDto());
     }
 
-    private void createUser(UserLoginDto user, ResponseEntity<TokenDto> result) {
+    private User createUser(UserLoginDto user, ResponseEntity<TokenDto> result) {
         if (!result.getStatusCode().is2xxSuccessful())
-            return;
+            return null;
 
         Jwt jwt = jwtDecoder.decode(result.getBody().access_token());
 
@@ -84,9 +84,11 @@ public class AuthService {
 
         User entity = userService.findByKeycloakId(keycloakId, false);
 
-        if (entity == null) {
-            userService.create(newDto.toEntity());
+        if (entity != null) {
+            return entity;
         }
+
+        return userService.create(newDto.toEntity());
     }
 
     String hashsPassword(String password) {
@@ -131,7 +133,7 @@ public class AuthService {
         Instant accessTokenExpiredDate = TokenUtils.createExpiredDateToken(fourMinutes);
         Instant refreshTokenExpiredDate = TokenUtils.createExpiredDateToken(thirtyMinutes);
 
-        return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate);
+        return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate, null);
     }
 
     private void setCookie(HttpServletResponse response, ResponseEntity<TokenDto> result) {

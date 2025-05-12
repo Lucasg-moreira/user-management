@@ -1,5 +1,6 @@
 package com.github.lucasgms.usermanagement.features.auth.domain.entities;
 
+import com.github.lucasgms.usermanagement.features.auth.domain.dtos.UserLoginDto;
 import com.github.lucasgms.usermanagement.features.client.domain.entities.Client;
 import jakarta.persistence.*;
 
@@ -35,6 +36,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.keycloakId = keycloakId;
+    }
+
+    public UserLoginDto toDto() {
+        return new UserLoginDto(
+                username,
+                null,
+                keycloakId
+        );
     }
 
     public long getId() {

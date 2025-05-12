@@ -69,7 +69,7 @@ export function AuthProvider({ children }) {
       if (!isAuthenticated() && !isPublicRoute(pathname)) {
         router.push('/login');
       } else if (isAuthenticated() && isPublicRoute(pathname)) {
-        router.push('/client');
+        router.push('/pessoas');
       }
     }
   }, [loading, pathname]);

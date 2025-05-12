@@ -37,7 +37,15 @@ export default function PeoplePage() {
   }, []);
 
   const handleDelete = useCallback((id) => {
-    console.log("Delete person:", id);
+    async function deleteClient() {
+      const response = await api.delete(`${apiUrl}/client/${id}`)
+
+      if (response)
+        window.location.reload()
+    }
+
+    deleteClient()
+    
   }, []);
 
   const handlePageChange = useCallback((page) => {

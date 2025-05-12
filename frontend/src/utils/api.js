@@ -57,12 +57,10 @@ export const api = {
       credentials: 'include'
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
       throw handleGlobalError({ response: { status: response.status, data } });
     }
 
-    return data;
+    return true;
   }
 }; 

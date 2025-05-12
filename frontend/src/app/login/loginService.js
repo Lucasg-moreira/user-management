@@ -16,11 +16,11 @@ export async function login(data) {
 }
 
 export async function getRefreshedToken(data) {
-  console.log (data)
   const res = await fetch(apiUrl + "/auth/refresh", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+    credentials: "include"
   });
 
   if (!res.ok) {

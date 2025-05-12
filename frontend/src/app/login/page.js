@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/utils/api";
-import { setRefreshToken } from "../components/clientSessionCheck";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
+import { useAuth } from "@/contexts/AuthContext";
 
 const INITIAL_FORM_STATE = {
   username: '',
@@ -15,6 +12,7 @@ const INITIAL_FORM_STATE = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +31,6 @@ export default function LoginPage() {
       setError('Por favor, preencha todos os campos');
       return false;
     }
-
     return true;
   }, [formData]);
 
@@ -47,20 +44,15 @@ export default function LoginPage() {
 
     try {
       setIsLoading(true);
-
-      const res = await api.post(`${apiUrl}/auth`, { username: formData.username, password: formData.password })
-
-      setRefreshToken(JSON.stringify(res))
-
+      await login(formData.username, formData.password);
       router.push("/pessoas");
-
     } catch (error) {
       setError('Ocorreu um erro ao tentar fazer login');
       console.error('Erro no login:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [formData, validateForm, router]);
+  }, [formData, validateForm, router, login]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
@@ -92,7 +84,7 @@ export default function LoginPage() {
               <input
                 id="username"
                 name="username"
-                type="username"
+                type="text"
                 autoComplete="username"
                 required
                 value={formData.username}

@@ -26,6 +26,11 @@ export const api = {
 
   async get(url) {
     const response = await fetch(url, { credentials: 'include'});
+
+    if (response.status == 204)
+      return
+
+
     const data = await response.json();
 
     if (!response.ok) {

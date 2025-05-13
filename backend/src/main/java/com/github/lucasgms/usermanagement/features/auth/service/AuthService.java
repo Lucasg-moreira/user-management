@@ -136,6 +136,13 @@ public class AuthService {
         return result.getBody().toRefreshToken(accessTokenExpiredDate, refreshTokenExpiredDate, null);
     }
 
+    public void logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("userToken", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
     private void setCookie(HttpServletResponse response, ResponseEntity<TokenDto> result) {
         Cookie cookie = new Cookie("userToken", result.getBody().access_token());
 

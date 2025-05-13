@@ -59,8 +59,20 @@ export default function PeoplePage() {
     }
 
     deleteClient()
-    
+
   }, []);
+
+  const handleLogout = useCallback(() => {
+
+    async function logout() {
+      await api.get(`${apiUrl}/auth/logout`)
+
+      router.push('/login')
+    }
+
+    logout()
+
+  }, [])
 
   const handlePageChange = useCallback((page) => {
     setCurrentPage(page);
@@ -78,17 +90,29 @@ export default function PeoplePage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Gerenciamento de Pessoas
           </h1>
-          <button
-            onClick={() => router.push('/pessoas/nova')}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
-          >
-            Nova Pessoa
-          </button>
+
+          <div>
+            <button
+              onClick={() => router.push('/pessoas/nova')}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
+            >
+              Nova Pessoa
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="ml-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
+            >
+              Logout
+            </button>
+
+          </div>
+
         </div>
 
         <Filters onFilter={handleFilter} />
 
-        <Table 
+        <Table
           people={clients}
           onEdit={handleEdit}
           onDelete={handleDelete}

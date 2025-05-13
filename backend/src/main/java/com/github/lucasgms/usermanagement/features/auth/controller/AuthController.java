@@ -31,4 +31,12 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
+
+    @GetMapping("/logout")
+    public ResponseEntity<RefreshTokenDto> logout(HttpServletResponse response) {
+
+        service.logout(response);
+
+        return ResponseEntity.noContent().build();
+    }
 }

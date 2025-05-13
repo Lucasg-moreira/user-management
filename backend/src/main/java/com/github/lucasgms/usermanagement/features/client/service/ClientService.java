@@ -18,8 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
-import java.time.Instant;
-import java.time.ZoneId;
+import java.time.*;
 
 @Service
 public class ClientService implements IClientService {
@@ -52,7 +51,13 @@ public class ClientService implements IClientService {
         Instant createdAt = null;
 
         if (filterParamsDto.createdAt() != null) {
-            createdAt = filterParamsDto.createdAt().atStartOfDay(ZoneId.systemDefault()).toInstant();
+            LocalDateTime newCreatedAt = filterParamsDto.createdAt().
+                    atStartOfDay(ZoneOffset.UTC)
+                    .plusDays(1)
+                    .toLocalDateTime();
+
+            createdAt = newCreatedAt.toInstant(ZoneOffset.UTC);
+
         }
 
         var result = repository.findByFilters(

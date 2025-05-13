@@ -13,12 +13,11 @@ export default function PeoplePage() {
 
   const [clients, setClients] = useState([]);
 
-  const [data, setData] = useState()
+  const [filters, setFilters] = useState();
 
   useEffect(() => {
     async function fetchData() {
-      const response = await api.get(`${apiUrl}/client?searchTerm=''`)
-      console.log('fetchData', response.content)
+      const response = await api.get(`${apiUrl}/client`)
       setClients(response.content)
     }
 
@@ -29,8 +28,23 @@ export default function PeoplePage() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const handleFilter = useCallback((filters) => {
-    console.log("Applied filters:", filters);
+    setFilters(filters)
   }, []);
+
+  useEffect(() => {
+    async function getWithFilters() {
+      if (!filters)
+        return
+
+      const response = await api.get(`${apiUrl}/client/filter?name=${filters.name ? filters.name : ''}&createdAt=${filters.createdAt ? filters.createdAt : ''}&cpfCnpj=${filters.cpfCnpj ? filters.cpfCnpj : ''}`)
+
+      if (response) {
+        setClients(response.content)
+      }
+    }
+
+    getWithFilters()
+  }, [filters])
 
   const handleEdit = useCallback((person) => {
     router.push(`pessoas/${person.id}/edit`)

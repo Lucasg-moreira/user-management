@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export const Filters = ({ onFilter }) => {
   const [filters, setFilters] = useState({
-    createdDate: "",
+    createdAt: "",
     name: "",
     cpfCnpj: "",
   });
@@ -30,8 +30,8 @@ export const Filters = ({ onFilter }) => {
           </label>
           <input
             type="date"
-            id="createdDate"
-            name="createdDate"
+            id="createdAt"
+            name="createdAt"
             value={filters.birthDate}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-white"

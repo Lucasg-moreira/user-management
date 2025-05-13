@@ -12,9 +12,12 @@ export const api = {
     });
 
     const responseData = await response.json();
-    console.log(responseData);
 
     if (!response.ok) {
+      if (response.error.contains("Acesso negado")) {
+        sessionStorage.clear()
+      }
+
       throw handleGlobalError({ response: { status: response.status, data: responseData } });
     }
 

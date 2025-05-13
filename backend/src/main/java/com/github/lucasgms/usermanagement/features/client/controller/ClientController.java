@@ -2,6 +2,7 @@ package com.github.lucasgms.usermanagement.features.client.controller;
 
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.ClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.CompanyClientDto;
+import com.github.lucasgms.usermanagement.features.client.domain.dtos.FilterParamsDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.entities.Client;
 import com.github.lucasgms.usermanagement.features.auth.domain.entities.User;
@@ -9,9 +10,12 @@ import com.github.lucasgms.usermanagement.features.client.domain.interfaces.ICli
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/client")
@@ -55,10 +59,22 @@ public class ClientController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Page<ClientDto>> get(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam() String searchTerm
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(this.service.findAllClients(page, size, searchTerm));
+        return ResponseEntity.ok(this.service.findAllClients(page, size));
+    }
+
+    @GetMapping("/filter")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Page<ClientDto>> getWithFilters(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String cpfCnpj,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createdAt
+    ) {
+        FilterParamsDto filter = new FilterParamsDto(createdAt, name, cpfCnpj);
+        return ResponseEntity.ok(this.service.findAllClientsByFilter(page, size, filter));
     }
 
     @GetMapping("/{id}")
@@ -97,5 +113,4 @@ public class ClientController {
     }
 
 }
-
 

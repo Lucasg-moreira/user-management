@@ -3,6 +3,7 @@ package com.github.lucasgms.usermanagement.features.client.service;
 import com.github.lucasgms.usermanagement.exception.BusinessException;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.ClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.CompanyClientDto;
+import com.github.lucasgms.usermanagement.features.client.domain.dtos.FilterParamsDto;
 import com.github.lucasgms.usermanagement.features.client.domain.dtos.IndividualClientDto;
 import com.github.lucasgms.usermanagement.features.client.domain.entities.Client;
 import com.github.lucasgms.usermanagement.features.client.domain.entities.CompanyClient;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.Instant;
+import java.time.ZoneId;
 
 @Service
 public class ClientService implements IClientService {
@@ -34,10 +36,30 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public Page<ClientDto> findAllClients(int page, int size, String searchTerm) {
+    public Page<ClientDto> findAllClients(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         var result = repository.findAll(pageable);
+
+        return result
+                .map(client -> client.toClientDto(client));
+    }
+
+    @Override
+    public Page<ClientDto> findAllClientsByFilter(int page, int size, FilterParamsDto filterParamsDto) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Instant createdAt = null;
+
+        if (filterParamsDto.createdAt() != null) {
+            createdAt = filterParamsDto.createdAt().atStartOfDay(ZoneId.systemDefault()).toInstant();
+        }
+
+        var result = repository.findByFilters(
+                filterParamsDto.name(),
+                filterParamsDto.cpfCnpj(),
+                createdAt,
+                pageable);
 
         return result
                 .map(client -> client.toClientDto(client));

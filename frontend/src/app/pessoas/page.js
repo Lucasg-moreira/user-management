@@ -67,6 +67,8 @@ export default function PeoplePage() {
     async function logout() {
       await api.get(`${apiUrl}/auth/logout`)
 
+      sessionStorage.clear()
+
       router.push('/login')
     }
 

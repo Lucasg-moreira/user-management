@@ -2,7 +2,6 @@ package com.github.lucasgms.usermanagement;
 
 import com.github.lucasgms.usermanagement.features.auth.domain.entities.User;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.github.lucasgms.usermanagement.features.auth.service.UserService;

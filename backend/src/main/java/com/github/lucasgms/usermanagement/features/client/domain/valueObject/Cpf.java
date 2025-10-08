@@ -13,7 +13,7 @@ public class Cpf {
 
     public Cpf() {}
 
-    Cpf(String cpf) {
+    public Cpf(String cpf) {
         this.value = cpf;
 
         if (!validateCpf(cpf)) {

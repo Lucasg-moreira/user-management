@@ -39,17 +39,6 @@ Aplicação feita para o teste técnico do JC, com as tecnologias:
 - PUT /api/users/{id}
 - DELETE /api/users/{id}
 
-## Testes
-Para executar os testes:
-```bash
-# Backend
-mvn test
-
-# Frontend
-cd frontend
-npm test
-```
-
 ## Troubleshooting
 ### Problemas Comuns
 1. **Erro de conexão com Keycloak**

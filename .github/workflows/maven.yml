@@ -27,9 +27,14 @@ jobs:
         java-version: '24'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
+    - name: Build backend
       working-directory: ./backend
-      run: mvn clean install
+      run: mvn clean package
+    - name: Test backend
+      working-directory: ./backend
+      run: mvn test
+    - name: Build Docker image
+      run: docker build -t backend:latest ./backend
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph

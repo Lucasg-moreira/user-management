@@ -42,7 +42,6 @@ jobs:
   tag-and-build:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout repository

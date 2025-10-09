@@ -14,8 +14,6 @@ on:
   push:
     branches: 
      - main
-    tags:
-      - 'v*.*.*'
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -56,7 +54,7 @@ jobs:
       - name: Extract version
         id: vars
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0)
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
           NEW_TAG=$(echo $LAST_TAG | awk -F. -v OFS=. '{$NF += 1 ; print}')
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
